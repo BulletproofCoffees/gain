@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper">
+	<update id="memver_update" parameterType="java.lang.String" >
+		 UPDATE     
+		 		member  
+			SET						
+			    mem_name = #{mem_name},
+			    mem_grade = #{mem_grade},
+			    mem_depart = #{mem_depart},
+			    mem_comp  = #{mem_comp},
+			    mem_indate = TO_DATE(#{mem_indate},'YYYY-MM-DD')
+			WHERE        
+				MEM_NO = #{mem_no}			      
+	</update>
+	
+	<update id="privacy_update" parameterType="MemberVo" >
+			 UPDATE 
+			       privacy 
+			    SET
+					pri_serial   = #{pri_serial  },
+					pri_marriage = #{pri_marriage},
+					pri_tel      = #{pri_tel     },
+					pri_phone    = #{pri_phone   },
+					pri_email    = #{pri_email   },
+					pri_addr     = #{pri_addr    },
+					pri_gender   = #{pri_gender  }
+				WHERE        
+					MEM_NO = #{mem_no}		
+				      	
+	</update>
+           	
+	<update id="military_update" parameterType="java.lang.String" >
+			 UPDATE 
+			       military 
+			    SET
+					mil_yn        = #{mil_yn},
+					mil_startday  = TO_DATE(#{mil_startday},'YYYY-MM-DD'),
+					mil_endday    = TO_DATE(#{mil_endday  },'YYYY-MM-DD'),
+					mil_category  = #{mil_category}
+				WHERE        
+					MEM_NO = #{mem_no}	
+	</update>
+
+
+
+<update id="updatearraylist" parameterType="java.util.Map">
+	<foreach collection="list" item="item"  open="DECLARE BEGIN" separator=";" close="; END;" >		
+		<if test = "(item.sch_no != null) || (item.sch_name != null)">
+			 MERGE INTO 
+					            school 
+					      USING 
+					            Dual      
+					      ON (  
+					             sch_no = #{item.sch_no}
+					            )
+						  WHEN 
+						      	MATCHED THEN 
+							                UPDATE SET
+							                            sch_grade    = #{item.sch_grade   }, 
+												        sch_name     = #{item.sch_name    }, 
+												        sch_major    = #{item.sch_major   }, 
+												        sch_startday = #{item.sch_startday}, 
+												        sch_endday   = #{item.sch_endday  }, 
+												        sch_status   = #{item.sch_status  }
+						      	WHEN NOT MATCHED THEN
+								            INSERT (
+								                         SCH_NO,
+												         MEM_NO,     
+												         SCH_GRADE,  
+												         SCH_NAME,   
+												         SCH_MAJOR,  
+												         SCH_STARTDAY,
+												         SCH_ENDDAY, 
+												         SCH_STATUS 
+								                        ) 
+								            VALUES (
+											            'SCH'||SEQ_SCH_NO.nextval,
+											            #{item.mem_no},
+											            #{item.sch_grade},
+											            #{item.sch_name},
+											            #{item.sch_major},
+											            #{item.sch_startday},
+											            #{item.sch_endday},
+											            #{item.sch_status}
+								                        )
+		</if>
+		<if test = "(item.cer_no != null) || (item.cer_name != null)">
+			 MERGE INTO 
+					            certification 
+					      USING 
+					            Dual      
+					      ON (  					
+					            cer_no = #{item.cer_no}
+					            )
+						  WHEN 
+						      	MATCHED THEN 
+							                UPDATE SET
+							                            cer_name = #{item.cer_name},
+							                            cer_day  = #{item.cer_day} 
+						      	WHEN NOT MATCHED THEN
+								            INSERT (
+								                        CER_NO,
+								                        MEM_NO,     
+								                        CER_NAME,
+								                        cer_day 
+								                        ) 
+								            VALUES (
+								                        'CER'||SEQ_CER_NO.nextval,
+										                 #{item.mem_no},
+										                 #{item.cer_name},
+										                 #{item.cer_day} 
+								                        )
+		</if>	
+		<if test = "(item.car_no != null) || (item.car_name != null)">
+			MERGE INTO 
+				            career 
+				      USING 
+				            Dual      
+				      ON (  
+				            car_no 	=#{item.car_no}
+				            )
+					  WHEN 
+					      	MATCHED THEN 
+						                UPDATE SET
+						                            car_startday = #{item.car_startday},
+										            car_endday   = #{item.car_endday  },
+										            car_job      = #{item.car_job     },
+										            car_pos      = #{item.car_pos     },
+										            car_name     = #{item.car_name    }
+					      	WHEN NOT MATCHED THEN
+							            INSERT (
+							                         CAR_NO,
+										             MEM_NO,     
+										             car_startday,
+										             car_endday, 
+										             car_job,    
+										             car_pos,    
+										             car_name   
+										           )
+										     VALUES(
+										             'CAR'||SEQ_CAR_NO.nextval,
+										             #{item.mem_no},
+										             #{item.car_startday},
+										             #{item.car_endday},
+										             #{item.car_job},
+										             #{item.car_pos},
+										             #{item.car_name}
+							                        )
+		</if>
+		<if test = "(item.edu_no != null) || (item.edu_name != null)">
+			 MERGE INTO 
+				            education 
+				      USING 
+				            Dual      
+				      ON (  
+				            edu_no 	=#{item.edu_no}
+				            )
+					  WHEN 
+					      	MATCHED THEN 
+						                UPDATE SET
+						                            edu_name     = #{item.edu_name    },
+											        edu_startday = #{item.edu_startday},
+											        edu_endday   = #{item.edu_endday  },
+											        edu_school   = #{item.edu_school  }
+					      	WHEN NOT MATCHED THEN
+							            INSERT (
+							                    EDU_NO,
+								                MEM_NO,     
+								                EDU_NAME,    
+								                EDU_STARTDAY,
+								                EDU_ENDDAY,  
+								                EDU_SCHOOL   
+								              )
+								        VALUES(
+								                'EDU'||SEQ_EDU_NO.nextval,
+								                #{item.mem_no},
+								                #{item.edu_name},
+								                #{item.edu_startday},
+								                #{item.edu_endday},
+								                #{item.edu_school}        
+								                )
+		</if>
+		<if test = "(item.ski_no != null) || (item.ski_name != null)">
+			 MERGE INTO 
+			            skill 
+			      USING 
+			            Dual      
+			      ON (  
+			            ski_no 	=#{item.ski_no}
+			            )
+				  WHEN 
+				      	MATCHED THEN 
+					                UPDATE SET
+					                            ski_name  =#{item.ski_name},
+            									ski_grade =#{item.ski_grade}
+				      	WHEN NOT MATCHED THEN
+						            INSERT (
+								                SKI_NO,
+								                MEM_NO,     
+								                SKI_NAME,
+								                SKI_GRADE
+								              )
+								        VALUES(
+								                'SKI'||SEQ_SKI_NO.nextval,
+								                #{item.mem_no},
+								                #{item.ski_name},
+								                #{item.ski_grade}         
+								                )
+		
+		</if>		
+	</foreach>					         
+</update>
+	
+<update id="pj_update" parameterType="MemberVo">
+	<foreach collection="list" item="item"  open="DECLARE BEGIN" separator=";" close="; END;" >						
+			 MERGE INTO 
+			            project 
+			      USING 
+			            Dual      
+			      ON (  
+			            pj_no = #{item.pj_no}
+			            )
+				  WHEN 
+				      	MATCHED THEN 
+					                UPDATE SET
+                                                pj_startday = #{item.pj_startday },
+                                                pj_endday   = #{item.pj_endday   },
+                                                pj_custom   = #{item.pj_custom   },
+                                                pj_comp     = #{item.pj_comp     },
+                                                pj_dev_ind  = #{item.pj_dev_ind  },
+                                                pj_dev_app  = #{item.pj_dev_app  },
+                                                pj_part     = #{item.pj_part     },
+                                                pj_device   = #{item.pj_device   },
+                                                pj_os       = #{item.pj_os       },
+                                                pj_lang     = #{item.pj_lang     },
+                                                pj_db       = #{item.pj_db       },
+                                                pj_tool     = #{item.pj_tool     },
+                                                pj_comm     = #{item.pj_comm     },
+                                                pj_etc      = #{item.pj_etc      },
+                                                pj_name     = #{item.pj_name     }
+				      	WHEN NOT MATCHED THEN
+						            INSERT (
+						            			pj_no,
+								                MEM_NO,     
+								                pj_startday ,
+												pj_endday   ,
+												pj_custom   ,
+												pj_comp     ,
+												pj_dev_ind  ,
+												pj_dev_app  ,
+												pj_part     ,
+												pj_device   ,
+												pj_os       ,
+												pj_lang     ,
+												pj_db       ,
+												pj_tool     ,
+												pj_comm     ,
+												pj_etc      ,
+												pj_name     
+								              )
+								        VALUES(
+								                'PJ'||SEQ_PJ_NO.nextval,
+								                #{item.mem_no},
+								                #{item.pj_startday },
+												#{item.pj_endday   },
+												#{item.pj_custom   },
+												#{item.pj_comp     },
+												#{item.pj_dev_ind  },
+												#{item.pj_dev_app  },
+												#{item.pj_part     },
+												#{item.pj_device   },
+												#{item.pj_os       },
+												#{item.pj_lang     },
+												#{item.pj_db       },
+												#{item.pj_tool     },
+												#{item.pj_comm     },
+												#{item.pj_etc      },
+												#{item.pj_name     }        
+								                ) 	
+	</foreach>							                	
+</update>
+	
+	
+</mapper>

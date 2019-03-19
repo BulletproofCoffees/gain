@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper">
+<select id="testlist" resultType="MemberVo">
+	SELECT
+    	  *
+    FROM 
+        member m
+        ,project pj 
+        ,career ca --경력
+        ,certification ce --자격증
+        ,education e --교육
+        ,military mi --병역
+        ,privacy pr --개인정보
+        ,school sc --학력
+        ,skill sk --기술
+    WHERE 
+        m.mem_no = 'MEM212'
+        and m.mem_no = pj.mem_no(+)
+        and m.mem_no = ca.mem_no(+)
+        and m.mem_no = ce.mem_no(+)
+        and m.mem_no = e.mem_no	(+)
+        and m.mem_no = mi.mem_no(+)
+        and m.mem_no = pr.mem_no(+)
+        and m.mem_no = sc.mem_no(+)
+        and m.mem_no = sk.mem_no(+)
+        ORDER BY m.mem_no DESC        
+</select>
+
+<!-- <insert id="testlist_insert" parameterType="java.util.HashMap">
+INSERT ALL
+<foreach collection="formap" item="item">
+into member2(MEM_NO,MEM_NAME)VALUES(SEQ_mem_NO.nextval , #{item.mem_name})
+ </foreach>
+SELECT * FROM DUAL
+</insert> -->
+<!-- <foreach collection="List" item="item" index="index"  open="(" separator="," close=")">
+ -->
+
+
+ 
+ <!--다중 인서트(예제 사용안함)-->
+ <insert id="testlist_insert" parameterType="java.util.List">
+    <foreach collection="list" item="item"  open="INSERT ALL " separator=" " close="SELECT * FROM DUAL" >
+     INTO
+        member2(
+        	MEM_NO,
+        	MEM_NAME
+        	)
+    	VALUES(
+    		'MEM'||SEQ_MEM_NO.nextval,
+    		#{item.mem_name}
+    		)
+    </foreach>							     
+ </insert>
+ 
+ <!--(예제 사용안함)-->
+  <update id="testlist_up2" parameterType="java.util.List">
+      <foreach collection="list" item="item"  open="DECLARE BEGIN" separator=";" close="; END;" >
+		   UPDATE member2
+		     SET mem_name = #{item.mem_name}       
+		     WHERE mem_no = #{item.mem_no}
+	 </foreach>
+ </update>
+ 
+
+  <update id="testlistup" parameterType="java.util.List">
+        <foreach collection="list" item="item"  open="DECLARE BEGIN" separator=";" close="; END;" >
+			 MERGE INTO  member2  
+					USING Dual      
+						ON (  
+						      <if test="item.mem_no == null">
+						            MEM_NO = null
+						      </if>
+						      <if test="item.mem_no != null">
+						            MEM_NO = #{item.mem_no}
+						      </if>
+						     )
+						WHEN 
+						    MATCHED THEN 
+						              UPDATE SET
+						                          mem_name = #{item.mem_name}
+						    WHEN NOT MATCHED THEN
+						            INSERT(
+						                    MEM_NO,
+							                MEM_NAME
+							               )
+								    VALUES(
+										    'MEM'||SEQ_MEM_NO.nextval,
+										    #{item.mem_name}    
+								        	)							        	
+		</foreach>
+ 	</update>
+ 	 	
+ 	<select id="school_search2" parameterType="MemberVo" resultType="MemberVo" >
+	   SELECT 
+	   			/*+ index_ffs(a school) parallel_index(a school) parallel(a 4) */
+		       a.mem_no,
+		       TO_CHAR(a.sch_endday, 'YYYY-MM-DD') sch_endday,
+		       a.sch_grade,
+		       a.sch_major,
+		       a.sch_name,
+		       a.sch_no,
+		       TO_CHAR(a.sch_startday, 'YYYY-MM-DD') sch_startday,
+		       a.sch_status
+	       FROM        		
+	            school a
+	</select>
+
+ 	
+</mapper>

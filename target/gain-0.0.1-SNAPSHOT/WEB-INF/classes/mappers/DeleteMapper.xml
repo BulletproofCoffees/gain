@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.tsetMapper">
+
+	<delete id="delete" parameterType="Map" >
+		delete 		
+		<if test=" key == 'car_no'">
+				career 
+			WHERE 
+				car_no = #{date}
+		</if>
+		<if test=" key == 'cer_no'">
+				certification 
+			WHERE 
+				cer_no = #{date}
+		</if>
+		<if test=" key == 'edu_no'">
+				education 
+			WHERE 
+				edu_no = #{date}
+		</if>
+		<if test=" key == 'mil_no'">
+				military 
+			WHERE 
+				mil_no = #{date}
+		</if>
+		<if test=" key == 'pj_no'">
+				project 
+			WHERE 
+				pj_no = #{date}
+		</if>
+		<if test=" key == 'sch_no'">
+				school 
+			WHERE 
+				sch_no = #{date}
+		</if>	
+		<if test=" key == 'ski_no'">
+				skill 
+			WHERE 
+				ski_no = #{date}
+		</if>			
+	</delete>
+
+</mapper>

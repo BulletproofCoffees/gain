@@ -14,8 +14,8 @@
     <init-param>
       <param-name>contextConfigLocation</param-name>
       <param-value>
-            				/WEB-INF/mvc-config.xml
-							/WEB-INF/oracle_mapper.xml
+            				/WEB-INF/configs/mvc-config.xml
+							/WEB-INF/configs/*.xml				
 			</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
@@ -24,17 +24,26 @@
     <servlet-name>dispatcherServlet</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
+  
   <jsp-config>
     <jsp-property-group>
       <url-pattern>*.jsp</url-pattern>
       <page-encoding>UTF-8</page-encoding>
     </jsp-property-group>
+    
     <jsp-property-group>
-      <url-pattern>/view/*</url-pattern>
-      <include-prelude>/view/incs/top.jspf</include-prelude>
-      <include-coda>/view/incs/bottom.jspf</include-coda>
+      <url-pattern>/WEB-INF/view/*</url-pattern>
+      <include-prelude>/incs/top.jspf</include-prelude>
+      <include-coda>/incs/bottom.jspf</include-coda>
+    </jsp-property-group>
+    
+    <jsp-property-group>
+      <url-pattern>/WEB-INF/view/test/*</url-pattern>
+      <include-prelude>/incs/searchTop.jspf</include-prelude>     
     </jsp-property-group>
   </jsp-config>
+  
+ 
   <filter>
     <filter-name>EncodingFilter</filter-name>
     <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -51,4 +60,7 @@
     <filter-name>EncodingFilter</filter-name>
     <url-pattern>*</url-pattern>
   </filter-mapping>
+ 
+  
+
 </web-app>

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.tsetMapper">
+
+
+	
+	
+<!-- <select id="memver_search2" parameterType="MemberVo" resultType="MemberVo" >
+    SELECT 
+            * 
+       FROM member m,
+            privacy p,
+            military mil,
+            school sc,
+            education ed,
+            career ca,
+            certification car,
+            skill sk,
+            project pj           
+       WHERE 
+            m.mem_name = #{mem_name}  
+            and m.MEM_NO = p.MEM_NO
+            and m.MEM_NO = mil.MEM_NO
+            and m.MEM_NO = sc.MEM_NO
+            and m.MEM_NO = ed.MEM_NO
+            and m.MEM_NO = ca.MEM_NO
+            and m.MEM_NO = car.MEM_NO
+            and m.MEM_NO = sk.MEM_NO
+            and m.MEM_NO = pj.MEM_NO       		
+</select> -->
+<select id="searchlist"  resultType="MemberVo" >
+		    SELECT 
+		            *
+		       FROM member m,
+		            privacy p       
+		       WHERE 
+		       		 m.MEM_NO = p.MEM_NO     
+		       	<if test="mem_name != null">
+		       		and m.mem_name LIKE  '%' || #{mem_name} || '%' 
+		       	</if>  	
+</select>
+
+
+
+
+
+<select id="memver_search" parameterType="MemberVo" resultType="MemberVo" >
+    SELECT 
+            m.mem_comp,
+            m.mem_depart,
+            m.mem_grade,           
+            m.mem_name,
+            m.mem_no,
+            TO_CHAR(m.mem_indate, 'YYYY-MM-DD') mem_indate,
+            p.*,
+            TO_CHAR(mil.mil_endday  , 'YYYY-MM-DD') mil_endday  ,
+            TO_CHAR(mil.mil_startday, 'YYYY-MM-DD') mil_startday,
+            mil.mem_no,
+            mil.mil_category,
+            mil.mil_yn 
+       FROM member m,
+            privacy p,
+            military mil
+       WHERE 
+       <if test="mem_no == null">
+           m.MEM_NO = (select MEM_NO from (
+                                            SELECT  MEM_NO
+                                                FROM  member  
+                                               ORDER by MEM_NO DESC
+                                     		)
+                                where rownum = 1)
+        </if>
+        <if test="mem_no != null"> 
+            m.MEM_NO = #{mem_no}  
+        </if> 
+            and m.MEM_NO = p.MEM_NO
+            and m.MEM_NO = mil.MEM_NO 		
+</select>
+
+<select id="certification_search" parameterType="MemberVo" resultType="MemberVo" >
+       SELECT 
+       		car.cer_name,
+       		TO_CHAR(car.cer_day, 'YYYY-MM-DD') cer_day,
+       		car.cer_no
+       FROM member m,
+            certification car
+       WHERE 
+       <if test="mem_no == null">
+           m.MEM_NO = (select MEM_NO from (
+                                            SELECT  MEM_NO
+                                                FROM  member  
+                                               ORDER by MEM_NO DESC
+                                     		)
+                                where rownum = 1)
+        </if>
+        <if test="mem_no != null"> 
+            m.MEM_NO = #{mem_no}  
+        </if>             
+            and m.MEM_NO = car.MEM_NO
+</select>
+
+
+
+<select id="school_search" parameterType="MemberVo" resultType="MemberVo" >
+
+   SELECT 
+	       a.mem_no,
+	       TO_CHAR(a.sch_endday, 'YYYY-MM-DD') sch_endday,
+	       a.sch_grade,
+	       a.sch_major,
+	       a.sch_name,
+	       a.sch_no,
+	       TO_CHAR(a.sch_startday, 'YYYY-MM-DD') sch_startday,
+	       a.sch_status
+       FROM 
+       		member m,
+            school a
+       WHERE 
+       <if test="mem_no == null">
+           m.MEM_NO = (select MEM_NO from (
+                                            SELECT  MEM_NO
+                                                FROM  member  
+                                               ORDER by MEM_NO DESC
+                                     		)
+                                where rownum = 1)
+        </if>
+        <if test="mem_no != null"> 
+            m.MEM_NO = #{mem_no}  
+        </if>           
+            and m.MEM_NO = a.MEM_NO          
+    
+
+</select>
+
+
+<select id="career_search" parameterType="MemberVo" resultType="MemberVo" >
+   SELECT 
+	       TO_CHAR(a.car_endday, 'YYYY-MM-DD') car_endday,
+	       a.car_job,
+	       a.car_name,
+	       a.car_no,
+	       a.car_pos,
+	       TO_CHAR(a.car_startday, 'YYYY-MM-DD')  car_startday,
+	       a.mem_no
+       FROM 
+       		member m,
+            career A
+       WHERE 
+       <if test="mem_no == null">
+           m.MEM_NO = (select MEM_NO from (
+                                            SELECT  MEM_NO
+                                                FROM  member  
+                                               ORDER by MEM_NO DESC
+                                     		)
+                                where rownum = 1)
+        </if>
+        <if test="mem_no != null"> 
+            m.MEM_NO = #{mem_no}  
+        </if>        
+            and m.MEM_NO = A.MEM_NO          
+    
+</select>    
+
+
+<select id="Education_search" parameterType="MemberVo" resultType="MemberVo" >
+   SELECT 
+	        A.edu_no       ,
+			A.edu_name     ,
+			TO_CHAR(A.edu_startday , 'YYYY-MM-DD') edu_startday,
+			TO_CHAR(A.edu_endday   , 'YYYY-MM-DD') edu_endday  ,
+			A.edu_school 
+       FROM 
+       		member m,
+            Education A
+       WHERE 
+       <if test="mem_no == null">
+           m.MEM_NO = (select MEM_NO from (
+                                            SELECT  MEM_NO
+                                                FROM  member  
+                                               ORDER by MEM_NO DESC
+                                     		)
+                                where rownum = 1)
+        </if>
+        <if test="mem_no != null"> 
+            m.MEM_NO = #{mem_no}  
+        </if>           
+            and m.MEM_NO = A.MEM_NO          
+    
+</select>
+    
+<select id="Skill_search" parameterType="MemberVo" resultType="MemberVo" >
+   SELECT 
+       *
+       FROM member m,
+            Skill A
+       WHERE 
+       <if test="mem_no == null">
+           m.MEM_NO = (select MEM_NO from (
+                                            SELECT  MEM_NO
+                                                FROM  member  
+                                               ORDER by MEM_NO DESC
+                                     		)
+                                where rownum = 1)
+        </if>
+        <if test="mem_no != null"> 
+            m.MEM_NO = #{mem_no}  
+        </if>             
+            and m.MEM_NO = A.MEM_NO          
+</select>   
+
+<select id="project_search" parameterType="MemberVo" resultType="MemberVo" > 
+ SELECT 
+	       	A.pj_no,       			 
+			TO_CHAR(A.pj_startday, 'YYYY-MM-DD') pj_startday,
+			TO_CHAR(A.pj_endday, 'YYYY-MM-DD') pj_endday,
+			A.pj_custom   ,
+			A.pj_comp     ,
+			A.pj_dev_ind  ,
+			A.pj_dev_app  ,
+			A.pj_part     ,
+			A.pj_device   ,
+			A.pj_os       ,
+			A.pj_lang     ,
+			A.pj_db       ,
+			A.pj_tool     ,
+			A.pj_comm     ,
+			A.pj_etc      ,
+			A.pj_name
+       FROM 
+       		member m,
+            project A
+       WHERE 
+       <if test="mem_no == null">
+           m.MEM_NO = (select MEM_NO from (
+                                            SELECT  MEM_NO
+                                                FROM  member  
+                                               ORDER by MEM_NO DESC
+                                     		)
+                                where rownum = 1)
+        </if>
+        <if test="mem_no != null"> 
+            m.MEM_NO = #{mem_no}  
+        </if>                 
+            and m.MEM_NO = A.MEM_NO          
+</select>
+</mapper>

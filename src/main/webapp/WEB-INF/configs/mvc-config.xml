@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc 
+						http://www.springframework.org/schema/mvc/spring-mvc.xsd
+						http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context 
+						http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- Uncomment and your base-package here: <context:component-scan base-package="org.springframework.samples.web"/> -->
+	<mvc:annotation-driven />
+
+
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<!-- Example: a logical view name of 'showMessage' is mapped to '/WEB-INF/jsp/showMessage.jsp' -->
+		<property name="prefix" value="/WEB-INF/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	
+	<!-- 유효성 검사 -->
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+    	<property name="validationMessageSource" ref="messageSource" />
+	</bean>
+
+	<!-- 컨택스트 패키지 -->
+	<context:component-scan base-package="com.test.*"></context:component-scan>
+	<context:component-scan base-package="com.book.*"></context:component-scan>
+	<context:component-scan base-package="com.main.*"></context:component-scan>
+		
+
+	<!-- 라이브러리 폴더 지정 -->
+	<mvc:resources mapping="/resources/**" location="/resources/" />	
+
+	<!-- Interceptors -->
+	<mvc:interceptors>
+         <mvc:interceptor>
+         	<mvc:mapping path="/**" />
+ 			<mvc:exclude-mapping path="/index" />  
+ 			<mvc:exclude-mapping path="/login" /> 
+ 			<mvc:exclude-mapping path="/logout" /> 
+		<!--<mvc:exclude-mapping path="/googlesecession" /> -->		
+			<bean class="com.test.interceptors.LoginInterceptor" />
+      </mvc:interceptor>
+    </mvc:interceptors>
+</beans>

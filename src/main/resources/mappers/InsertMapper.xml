@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper">
+
+	<insert id="mem_insert" parameterType="MemberVo">
+		INSERT INTO member (
+							  MEM_NO,
+							  MEM_NAME,
+							  MEM_GRADE,
+							  MEM_DEPART,
+							  MEM_COMP,
+							  MEM_INDATE                                        
+					)VALUES(
+							 'MEM'||SEQ_MEM_NO.nextval,
+							 #{mem_name},
+							 #{mem_grade},
+							 #{mem_depart},
+							 #{mem_comp},
+							 #{mem_indate}       
+						    				)
+	<selectKey keyProperty="mem_no" resultType="String" order = "AFTER">
+			SELECT SEQ_MEM_NO.CURRVAL AS mem_no FROM DUAL
+		</selectKey>
+	</insert>
+	
+	<insert id="pri_insert" parameterType="MemberVo">
+		INSERT ALL
+				INTO 
+					privacy (
+							  MEM_NO,
+							  PRI_SERIAL,
+							  PRI_MARRIAGE,
+							  PRI_TEL,
+							  PRI_PHONE,
+							  PRI_EMAIL,
+							  PRI_ADDR,
+							  PRI_GENDER
+					)VALUES(
+								#{mem_no},
+								#{pri_serial},
+								#{pri_marriage},
+								#{pri_tel},
+								#{pri_phone},
+								#{pri_email},
+								#{pri_addr},
+								#{pri_gender}
+								            	)
+				INTO 
+					military (
+							   MIL_NO,
+							   MEM_NO,
+							   MIL_YN,
+							   MIL_STARTDAY,
+							   MIL_ENDDAY,
+							   MIL_CATEGORY
+					)VALUES(
+								'MIL'||SEQ_MIL_NO.nextval,								
+								#{mem_no},
+								#{mil_yn},
+								#{mil_startday},
+								#{mil_endday},
+								#{mil_category}
+								            	)
+				SELECT * FROM DUAL
+	</insert>
+	
+	<!-- <insert id="mil_insert" parameterType="MemberVo">
+		INSERT INTO 
+					military (
+							   MIL_NO,
+							   MEM_NO,
+							   MIL_YN,
+							   MIL_STARTDAY,
+							   MIL_ENDDAY,
+							   MIL_CATEGORY
+					)VALUES(
+								'MIL'||SEQ_MIL_NO.nextval,								
+								#{mem_no},
+								#{mil_yn},
+								#{mil_startday},
+								#{mil_endday},
+								#{mil_category}
+								            	)
+	</insert> -->
+	
+
+</mapper>
